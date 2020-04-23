@@ -1,0 +1,16 @@
+[package]
+name = "libc_alloc"
+description = "A simple global allocator which uses malloc / free"
+authors = ["Daniel Prilik <danielprilik@gmail.com>"]
+version = "1.0.0"
+license = "MIT"
+edition = "2018"
+readme = "README.md"
+documentation = "https://docs.rs/libc_alloc"
+homepage = "https://github.com/daniel5151/libc_alloc"
+repository  = "https://github.com/daniel5151/libc_alloc"
+keywords = ["malloc", "memalign", "libc", "allocator", "no_std"]
+categories = ["development-tools::ffi", "embedded", "no-std"]
+
+[dependencies]
+libc = { version = "0.2", default-features = false }
