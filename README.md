@@ -1,5 +1,8 @@
 # libc_alloc
 
+[![](http://meritbadge.herokuapp.com/libc_alloc)](https://crates.io/crates/libc_alloc)
+[![](https://docs.rs/libc_alloc/badge.svg)](https://docs.rs/libc_alloc)
+
 A simple global allocator for Rust which hooks into `libc`. Useful in `no_std` contexts.
 
 It uses `posix_memalign` to allocate (i.e: malloc, but with the ability to specify alignment), and `free` to deallocate.
