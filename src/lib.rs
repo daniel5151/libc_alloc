@@ -28,17 +28,16 @@ unsafe impl GlobalAlloc for LibcAlloc {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let mut ptr = ptr::null_mut();
-        // `posix_memalign` returns an error int, but it can be safely ignored it:
-        // - EINVAL cannot occur, as layout.align() is guaranteed to be a power of two
-        // - ENOMEM will leave `ptr` as a nullptr, which is returned from this method to
-        //   indicate an allocation failure.
-        libc::posix_memalign(
+        let ret = libc::posix_memalign(
             &mut ptr,
             layout.align().max(core::mem::size_of::<usize>()),
             layout.size(),
         );
-
-        ptr as *mut u8
+        if ret == 0 {
+            ptr as *mut u8
+        } else {
+            ptr::null_mut()
+        }
     }
 
     #[inline]
