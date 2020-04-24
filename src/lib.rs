@@ -1,7 +1,8 @@
 //! A simple global allocator for Rust which hooks into `libc`.
-//! Useful in `no_std` + `alloc` contexts.
+//! Useful when linking `no_std` + `alloc` code into existing embedded C code.
 //!
-//! Uses `posix_memalign` for allocations, and `free` for deallocations.
+//! Uses `posix_memalign` for allocations, `realloc` for reallocations, and
+//! `free` for deallocations.
 //!
 //! ## Example
 //!
@@ -17,7 +18,9 @@
 use core::alloc::{GlobalAlloc, Layout};
 use core::ffi::c_void;
 
-/// Global Allocator which uses `malloc` and `free` under the hood.
+mod libc;
+
+/// Global Allocator which hooks into libc to allocate / free memory.
 pub struct LibcAlloc;
 
 unsafe impl GlobalAlloc for LibcAlloc {
