@@ -1,4 +1,4 @@
-//! A simple global allocator for Rust which hooks into `libc`.
+//! A simple global allocator which hooks into `libc`.
 //! Useful when linking `no_std` + `alloc` code into existing embedded C code.
 //!
 //! Uses `posix_memalign` for allocations, `realloc` for reallocations, and
