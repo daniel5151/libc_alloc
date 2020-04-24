@@ -1,6 +1,6 @@
 //! A tiny subset of the `libc` crate.
 
-#![allow(non_camel_case_types, dead_code)]
+#![allow(non_camel_case_types)]
 
 use core::ffi::c_void;
 
@@ -13,8 +13,7 @@ pub type c_int = i32;
 pub type size_t = usize;
 
 extern "C" {
-    pub fn posix_memalign(memptr: *mut *mut c_void, align: size_t, size: size_t) -> c_int;
-    pub fn malloc(size: size_t) -> *mut c_void;
     pub fn free(p: *mut c_void);
+    pub fn posix_memalign(memptr: *mut *mut c_void, align: size_t, size: size_t) -> c_int;
     pub fn realloc(p: *mut c_void, size: size_t) -> *mut c_void;
 }
