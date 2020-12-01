@@ -6,7 +6,9 @@
 A simple global allocator for Rust which hooks into `libc`.
 Useful when linking `no_std` + `alloc` code into existing embedded C code.
 
-Uses `posix_memalign` for allocations, `realloc` for reallocations, and `free` for deallocations.
+On Unix-like OSs, use `posix_memalign` for allocations, `realloc` for reallocations, and `free` for deallocations.
+
+On Windows, use native [`_aligned_malloc`](https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/aligned-malloc) for allocations, [`_aligned_realloc`](https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/aligned-realloc) for reallocations, and [`_aligned_free`](https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/aligned-free) for deallocations.
 
 ## Example
 
