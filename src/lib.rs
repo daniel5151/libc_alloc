@@ -19,11 +19,14 @@ use core::alloc::{GlobalAlloc, Layout};
 use core::ffi::c_void;
 use core::ptr;
 
-/// Global Allocator which hooks into libc to allocate / free memory.
-pub struct LibcAlloc;
-
 #[cfg(target_family = "unix")]
 mod libc;
+
+#[cfg(target_family = "windows")]
+mod win_crt;
+
+/// Global Allocator which hooks into libc to allocate / free memory.
+pub struct LibcAlloc;
 
 #[cfg(target_family = "unix")]
 unsafe impl GlobalAlloc for LibcAlloc {
@@ -65,31 +68,30 @@ unsafe impl GlobalAlloc for LibcAlloc {
 }
 
 #[cfg(target_family = "windows")]
-mod win_crt;
-
-#[cfg(target_family = "windows")]
 unsafe impl GlobalAlloc for LibcAlloc {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        return win_crt::_aligned_malloc(layout.size(), layout.align()) as *mut u8;
+        win_crt::_aligned_malloc(layout.size(), layout.align()) as *mut u8
     }
 
     #[inline]
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        return win_crt::_aligned_free(ptr as *mut c_void);
+        win_crt::_aligned_free(ptr as *mut c_void)
     }
 
     #[inline]
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+        // Unfortunately, _aligned_calloc does not exist, so the memory
+        // has to be manually zeroed-out.
         let ptr = self.alloc(layout);
         if !ptr.is_null() {
             ptr::write_bytes(ptr, 0, layout.size());
         }
-        return ptr;
+        ptr
     }
 
     #[inline]
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
-        return win_crt::_aligned_realloc(ptr as *mut c_void, new_size, layout.align()) as *mut u8;
+        win_crt::_aligned_realloc(ptr as *mut c_void, new_size, layout.align()) as *mut u8
     }
 }
