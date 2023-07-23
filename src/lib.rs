@@ -1,8 +1,8 @@
 //! A simple global allocator which hooks into `libc`.
 //! Useful when linking `no_std` + `alloc` code into existing embedded C code.
 //!
-//! Uses `posix_memalign` for allocations, `realloc` for reallocations, and
-//! `free` for deallocations.
+//! Uses `posix_memalign` for allocations, and `free` for
+//! deallocations.  On Windows, uses `_aligned_*` functions.
 //!
 //! ## Example
 //!
@@ -17,7 +17,7 @@
 
 use core::alloc::{GlobalAlloc, Layout};
 use core::ffi::c_void;
-use core::ptr;
+use core::{cmp, ptr};
 
 #[cfg(target_family = "unix")]
 mod libc;
@@ -62,8 +62,15 @@ unsafe impl GlobalAlloc for LibcAlloc {
     }
 
     #[inline]
-    unsafe fn realloc(&self, ptr: *mut u8, _layout: Layout, new_size: usize) -> *mut u8 {
-        libc::realloc(ptr as *mut c_void, new_size) as *mut u8
+    unsafe fn realloc(&self, old_ptr: *mut u8, old_layout: Layout, new_size: usize) -> *mut u8 {
+        let new_layout = Layout::from_size_align_unchecked(new_size, old_layout.align());
+        let new_ptr = self.alloc(new_layout);
+        if !new_ptr.is_null() {
+            let size = cmp::min(old_layout.size(), new_size);
+            ptr::copy_nonoverlapping(old_ptr, new_ptr, size);
+            self.dealloc(old_ptr, old_layout);
+        }
+        new_ptr
     }
 }
 
