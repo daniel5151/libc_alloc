@@ -1,8 +1,8 @@
 //! A simple global allocator which hooks into `libc`.
 //! Useful when linking `no_std` + `alloc` code into existing embedded C code.
 //!
-//! Uses `posix_memalign` for allocations, and `free` for
-//! deallocations.  On Windows, uses `_aligned_*` functions.
+//! Uses `memalign` for allocations, and `free` for deallocations.
+//! On Windows, uses `_aligned_*` functions.
 //!
 //! ## Example
 //!
@@ -32,17 +32,10 @@ pub struct LibcAlloc;
 unsafe impl GlobalAlloc for LibcAlloc {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let mut ptr = ptr::null_mut();
-        let ret = libc::posix_memalign(
-            &mut ptr,
+        libc::memalign(
             layout.align().max(core::mem::size_of::<usize>()),
             layout.size(),
-        );
-        if ret == 0 {
-            ptr as *mut u8
-        } else {
-            ptr::null_mut()
-        }
+        ) as *mut u8
     }
 
     #[inline]
