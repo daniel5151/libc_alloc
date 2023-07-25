@@ -21,6 +21,6 @@ static ALLOCATOR: LibcAlloc = LibcAlloc;
 
 ## Project Status
 
-Given how dead-simple this crate is, I doubt it will need to be updated very often (if at all).
+Given how dead-simple this crate is, I doubt it will need to be updated very often.
 
 Please file an issue and/or open a PR if you spot a bug / if something stops working.
