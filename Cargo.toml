@@ -12,4 +12,5 @@ repository  = "https://github.com/daniel5151/libc_alloc"
 keywords = ["malloc", "memalign", "libc", "allocator", "no_std"]
 categories = ["development-tools::ffi", "embedded", "no-std"]
 
-[dependencies]
+[features]
+global = []

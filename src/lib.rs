@@ -28,6 +28,10 @@ mod win_crt;
 /// Global Allocator which hooks into libc to allocate / free memory.
 pub struct LibcAlloc;
 
+#[cfg(feature = "global")]
+#[global_allocator]
+static ALLOCATOR: LibcAlloc = LibcAlloc;
+
 #[cfg(not(target_family = "windows"))]
 unsafe impl GlobalAlloc for LibcAlloc {
     #[inline]
