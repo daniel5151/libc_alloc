@@ -19,6 +19,12 @@ use libc_alloc::LibcAlloc;
 static ALLOCATOR: LibcAlloc = LibcAlloc;
 ```
 
+Alternatively, with the `global` Cargo feature, the crate only needs to be pulled in:
+
+```rust
+extern crate libc_alloc;
+```
+
 ## Project Status
 
 Given how dead-simple this crate is, I doubt it will need to be updated very often.
