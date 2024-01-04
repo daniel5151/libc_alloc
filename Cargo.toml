@@ -13,5 +13,5 @@ keywords = ["malloc", "memalign", "libc", "allocator", "no_std"]
 categories = ["development-tools::ffi", "embedded", "no-std"]
 
 [features]
-# settings this feature will define the `#[global_allocator]`
+# enabling this feature will define the `#[global_allocator]`
 global = []
