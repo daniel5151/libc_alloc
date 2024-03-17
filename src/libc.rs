@@ -10,5 +10,10 @@ pub type size_t = usize;
 
 extern "C" {
     pub fn free(p: *mut c_void);
+
+    #[cfg(not(target_os = "macos"))]
     pub fn memalign(align: size_t, size: size_t) -> *mut c_void;
+
+    #[cfg(target_os = "macos")]
+    pub fn posix_memalign(ptr: *mut *mut c_void, align: size_t, size: size_t) -> core::ffi::c_int;
 }
