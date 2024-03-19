@@ -36,10 +36,27 @@ static ALLOCATOR: LibcAlloc = LibcAlloc;
 unsafe impl GlobalAlloc for LibcAlloc {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        libc::memalign(
-            layout.align().max(core::mem::size_of::<usize>()),
-            layout.size(),
-        ) as *mut u8
+        let align = layout.align().max(core::mem::size_of::<usize>());
+        let size = layout.size();
+
+        #[cfg(not(target_os = "macos"))]
+        {
+            libc::memalign(align, size) as *mut u8
+        }
+
+        #[cfg(target_os = "macos")]
+        {
+            let mut ptr: *mut u8 = core::ptr::null_mut();
+            let res = libc::posix_memalign(
+                (&mut ptr as *mut *mut u8).cast::<*mut c_void>(),
+                align,
+                size,
+            );
+            if res != 0 {
+                return core::ptr::null_mut();
+            }
+            ptr
+        }
     }
 
     #[inline]
